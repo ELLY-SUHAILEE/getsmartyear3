@@ -1,754 +1,1154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuiz English Tahun 3 - Get Smart Plus 3</title>
-  <!-- Canvas Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  
-  <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --text-color: #2d3748;
-      --text-muted: #718096;
-      --primary: #4c51bf;
-      --primary-hover: #434190;
-      --success: #38a169;
-      --error: #e53e3e;
-      --border-color: #e2e8f0;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    [data-theme="dark"] {
-      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      --card-bg: rgba(30, 41, 59, 0.95);
-      --text-color: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --border-color: #334155;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
-    body { background: var(--bg-gradient); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: var(--text-color); }
-    .app-container { width: 100%; max-width: 750px; background: var(--card-bg); border-radius: 20px; box-shadow: var(--shadow); padding: 30px; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEQS - Smart English Quiz System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .icon-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; transition: all 0.2s ease; }
-    .icon-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    <style>
+        /* ==========================================
+           1. CSS VARIABLES & THEMES (2026 DESIGN)
+           ========================================== */
+        :root {
+            --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Light Mode Palette */
+            --bg-gradient: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 50%, #dbeafe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 20px 40px -15px rgba(0, 38, 115, 0.12), 0 0 15px rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --text-white: #ffffff;
+            
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            --secondary: #06b6d4;
+            --accent: #8b5cf6;
+            
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning: #f59e0b;
+            
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .view { display: none; animation: fadeIn 0.4s ease-in-out forwards; }
-    .view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body.dark-mode {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%);
+            --glass-bg: rgba(30, 41, 59, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(79, 70, 229, 0.15);
+            --card-bg: rgba(30, 41, 59, 0.85);
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            --primary-light: rgba(79, 70, 229, 0.25);
+            --success-bg: rgba(16, 185, 129, 0.2);
+            --danger-bg: rgba(239, 68, 68, 0.2);
+        }
 
-    h1, h2 { text-align: center; margin-bottom: 15px; }
-    h1 { color: var(--primary); font-size: 2rem; }
-    p.subtitle { text-align: center; color: var(--text-muted); margin-bottom: 25px; }
+        /* ==========================================
+           2. GLOBAL STYLES & RESET
+           ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-color); }
-    input[type="text"], select { width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); border-radius: 10px; background: var(--card-bg); color: var(--text-color); font-size: 1rem; outline: none; }
-    input[type="text"]:focus, select:focus { border-color: var(--primary); }
+        body {
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
 
-    .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
-    .btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
-    .btn-secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-    .btn-secondary:hover { background: var(--primary); color: white; }
-    .btn-danger { background: var(--error); box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3); }
-    .btn-danger:hover { background: #c53030; }
+        /* Ambient Glow Circles */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(79, 70, 229, 0.3);
+        }
+        .glow-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 450px;
+            height: 450px;
+            background: rgba(6, 182, 212, 0.3);
+        }
 
-    .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 0.95rem; }
-    .timer-bar-container { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
-    .timer-bar { height: 100%; width: 100%; background: var(--primary); transition: width 1s linear; }
-    .progress-bar-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 25px; overflow: hidden; }
-    .progress-bar { height: 100%; width: 0%; background: var(--success); transition: width 0.3s ease; }
+        /* Canvas Confetti Layer */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
 
-    .question-card { margin-bottom: 25px; }
-    .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; white-space: pre-line; }
-    .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        /* Main Container */
+        .app-container {
+            width: 100%;
+            max-width: 680px;
+            position: relative;
+            z-index: 10;
+        }
 
-    .option-btn { padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 12px; background: transparent; color: var(--text-color); font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; }
-    .option-btn:hover:not([disabled]) { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
-    .option-btn.correct { background: #c6f6d5 !important; border-color: var(--success) !important; color: #22543d !important; font-weight: bold; }
-    .option-btn.wrong { background: #fed7d7 !important; border-color: var(--error) !important; color: #742a2a !important; }
+        /* Header Navbar */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+        }
 
-    .result-card { text-align: center; padding: 10px 0; }
-    .badge { font-size: 3.5rem; margin-bottom: 10px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-    .score-display { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
-    .status-msg { font-weight: 600; margin-bottom: 20px; padding: 10px; border-radius: 8px; }
-    .status-sync { margin-top: 15px; font-size: 0.9rem; color: var(--text-muted); font-style: italic; }
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
 
-    .review-item { padding: 15px; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 12px; text-align: left; }
-    .review-q { font-weight: bold; margin-bottom: 8px; white-space: pre-line; }
-    .review-a { font-size: 0.9rem; margin-bottom: 4px; }
-    .review-a.user-wrong { color: var(--error); }
-    .review-a.correct-a { color: var(--success); font-weight: 600; }
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-white);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        }
 
-    .teacher-table-wrapper { width: 100%; overflow-x: auto; margin-bottom: 20px; }
-    .records-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
-    .records-table th, .records-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
-    .records-table th { background: rgba(99, 102, 241, 0.1); color: var(--primary); font-weight: bold; }
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    @media (max-width: 600px) { .app-container { padding: 20px; } .action-grid { grid-template-columns: 1fr; } }
-  </style>
+        .brand-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 0.85rem;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Glassmorphism Card Wrapper */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--glass-shadow);
+            padding: 2.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* View Switching Animation */
+        .view-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .view-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================
+           3. FORM & INPUT STYLES (REGISTRATION)
+           ========================================== */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 0.9rem 1.15rem;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid rgba(148, 163, 184, 0.3);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        /* ==========================================
+           4. BUTTON STYLES
+           ========================================== */
+        .btn {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-white);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        /* ==========================================
+           5. QUIZ INTERFACE STYLES
+           ========================================== */
+        .quiz-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-meta {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .timer-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.75rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Question Card */
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 1.75rem;
+            color: var(--text-main);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+        }
+
+        .option-card {
+            background: var(--card-bg);
+            border: 2px solid rgba(148, 163, 184, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+            background: var(--primary-light);
+        }
+
+        .option-prefix {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .option-card:hover .option-prefix {
+            background: var(--primary);
+            color: var(--text-white);
+        }
+
+        /* Selected State */
+        .option-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .option-card.selected .option-prefix {
+            background: var(--primary);
+            color: var(--text-white);
+        }
+
+        /* ==========================================
+           6. RESULT & REVIEW STYLES
+           ========================================== */
+        .result-box {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .badge-excellent {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-good {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge-try {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .percentage-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-list {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            text-align: left;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
+            font-size: 0.9rem;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .summary-val {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Sync Indicator */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .sync-loading {
+            color: var(--warning);
+        }
+
+        .sync-success {
+            color: var(--success);
+        }
+
+        .sync-error {
+            color: var(--danger);
+        }
+
+        /* Review List */
+        .review-container {
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-item {
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-left: 5px solid var(--text-muted);
+        }
+
+        .review-item.is-correct {
+            border-left-color: var(--success);
+        }
+
+        .review-item.is-wrong {
+            border-left-color: var(--danger);
+        }
+
+        .review-q-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-ans {
+            font-size: 0.875rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .ans-tag {
+            font-weight: 700;
+        }
+
+        .text-correct { color: var(--success); }
+        .text-wrong { color: var(--danger); }
+
+        /* Custom Scrollbar */
+        .review-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .review-container::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.4);
+            border-radius: 10px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+            .glass-card {
+                padding: 1.5rem;
+            }
+            .score-display {
+                font-size: 2.8rem;
+            }
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Header Controls -->
-    <div class="header-controls">
-      <button class="icon-btn" id="theme-btn" title="Toggle Dark/Light Mode">🌙</button>
-      <div style="font-weight: bold; color: var(--primary);">Kuiz English Tahun 3</div>
-      <button class="icon-btn" id="home-btn" title="Return to Login">🏠</button>
+    <!-- Ambient Glowing Elements -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Canvas Confetti Overlay -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Main Application Container -->
+    <div class="app-container">
+
+        <!-- Header Navbar -->
+        <header class="app-header">
+            <a href="#" class="brand-logo">
+                <div class="brand-icon">S</div>
+                <div class="brand-text">
+                    <h1>SEQS</h1>
+                    <p>Smart English Quiz System</p>
+                </div>
+            </a>
+            <button class="theme-toggle" id="themeToggleBtn" aria-label="Toggle Theme">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Dark</span>
+            </button>
+        </header>
+
+        <!-- Main Glass Card Body -->
+        <main class="glass-card">
+
+            <!-- ==========================================
+                 VIEW 1: REGISTRATION / LOGIN PAGE
+                 ========================================== -->
+            <section id="loginView" class="view-section active">
+                <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">Welcome Student! 🚀</h2>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">
+                    Please fill in your details to start your English quiz.
+                </p>
+
+                <form id="loginForm" onsubmit="handleStartQuiz(event)">
+                    <div class="form-group">
+                        <label for="studentName">Full Name (Nama Murid)</label>
+                        <input type="text" id="studentName" class="input-control" placeholder="e.g. Ahmad Bin Ali" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentClass">Class (Kelas)</label>
+                        <input type="text" id="studentClass" class="input-control" placeholder="e.g. 3 Bestari" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="moduleSelect">Select Quiz Module (Pilih Modul)</label>
+                        <select id="moduleSelect" class="input-control" required>
+                            <option value="" disabled selected>-- Choose Module --</option>
+                            <option value="Module 1">Module 1 – Welcome!</option>
+                            <option value="Module 2">Module 2 – Every Day</option>
+                            <option value="Module 3">Module 3 – Right Now</option>
+                            <option value="Module 4">Module 4 – Year In Year Out</option>
+                            <option value="Module 5">Module 5 – My New House</option>
+                            <option value="Module 6">Module 6 – Food Please</option>
+                            <option value="Module 7">Module 7 – Out and About</option>
+                            <option value="Module 8">Module 8 – Where Were You Yesterday</option>
+                            <option value="Module 9">Module 9 – On Holiday</option>
+                            <option value="Module 10">Module 10 – The World Around Us</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <span>START QUIZ</span>
+                        <span>⚡</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 2: QUIZ PAGE
+                 ========================================== -->
+            <section id="quizView" class="view-section">
+                <div class="quiz-header-bar">
+                    <span class="quiz-meta" id="quizProgressText">Question 1 of 5</span>
+                    <div class="timer-badge">
+                        <span>⏱️</span>
+                        <span id="timerText">00:30</span>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+
+                <div class="options-grid" id="optionsContainer">
+                    <!-- Dynamic Option Cards populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 3: RESULT PAGE
+                 ========================================== -->
+            <section id="resultView" class="view-section">
+                <div class="result-box">
+                    <div id="statusBadge" class="badge-status badge-excellent">Excellent</div>
+                    <div class="score-display" id="finalScoreText">0 / 0</div>
+                    <div class="percentage-text" id="finalPctText">Accuracy: 0%</div>
+
+                    <!-- Cloud Sync Indicator -->
+                    <div id="syncStatus" class="sync-status sync-loading">
+                        <span>🔄 Submitting results to cloud...</span>
+                    </div>
+
+                    <div class="summary-list">
+                        <div class="summary-item">
+                            <span class="summary-label">Student Name</span>
+                            <span class="summary-val" id="resName">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Class</span>
+                            <span class="summary-val" id="resClass">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Module</span>
+                            <span class="summary-val" id="resModule">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Date & Time</span>
+                            <span class="summary-val" id="resDateTime">-</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.85rem;">
+                        <button class="btn btn-outline" onclick="switchView('reviewView')">Review Answers 📝</button>
+                        <button class="btn" onclick="resetToHome()">Home Page 🏠</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 VIEW 4: REVIEW PAGE
+                 ========================================== -->
+            <section id="reviewView" class="view-section">
+                <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Answer Review 📋</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+                    Check your answers below to learn and improve!
+                </p>
+
+                <div class="review-container" id="reviewContainer">
+                    <!-- Dynamic Review Items -->
+                </div>
+
+                <button class="btn" onclick="resetToHome()">Back to Home 🏠</button>
+            </section>
+
+        </main>
     </div>
 
-    <!-- 1. LOGIN / START VIEW -->
-    <div id="login-view" class="view active">
-      <h1>Kuiz English Tahun 3</h1>
-      <p class="subtitle">Pilih modul dan isi maklumat anda untuk memulakan kuiz</p>
-      
-      <form id="login-form">
-        <div class="form-group">
-          <label for="student-name">Nama Penuh Murid:</label>
-          <input type="text" id="student-name" placeholder="Contoh: Adam Harith" required>
-        </div>
+    <!-- ==========================================
+         JAVASCRIPT LOGIC (VANILLA JS)
+         ========================================== -->
+    <script>
+        /* ==========================================
+           1. CONSTANTS & QUESTION BANK
+           ========================================== */
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxE1VmbtwtVKSlNuBMTQJnbMxZIYQXoz0C2fMePYBgCv5srU6VWrsgJyrl2RHOIrnMh/exec";
 
-        <div class="form-group">
-          <label for="student-class">Kelas:</label>
-          <input type="text" id="student-class" placeholder="Contoh: 3 Cemerlang" required>
-        </div>
+        const questionBank = {
+            "Module 1": [
+                { q: "Choose the correct greeting for 8:00 AM.", options: ["Good evening", "Good morning", "Good night", "Good afternoon"], answer: 1 },
+                { q: "What day comes after Tuesday?", options: ["Monday", "Wednesday", "Thursday", "Friday"], answer: 1 },
+                { q: "He ___ 9 years old.", options: ["is", "are", "am", "be"], answer: 0 },
+                { q: "How do you spell the number '12'?", options: ["Twelv", "Twelve", "Twelf", "Twelvee"], answer: 1 },
+                { q: "Nice to ___ you!", options: ["see", "meet", "know", "look"], answer: 1 }
+            ],
+            "Module 2": [
+                { q: "I always ___ my teeth in the morning.", options: ["brush", "brushes", "brushed", "brushing"], answer: 0 },
+                { q: "She ___ to school by bus every day.", options: ["go", "goes", "going", "gone"], answer: 1 },
+                { q: "What time is it if the big hand is on 12 and small hand is on 3?", options: ["3 o'clock", "12 o'clock", " Half past 3", "Quarter past 12"], answer: 0 },
+                { q: "They ___ not play video games on weekdays.", options: ["does", "do", "is", "are"], answer: 1 },
+                { q: "My father ___ breakfast at 7:00 AM.", options: ["eat", "eats", "eating", "ate"], answer: 1 }
+            ],
+            "Module 3": [
+                { q: "Look! The children ___ in the playground.", options: ["is playing", "are playing", "plays", "played"], answer: 1 },
+                { q: "She is ___ a book right now.", options: ["reading", "reads", "read", "reader"], answer: 0 },
+                { q: "Listen! Someone ___ at the door.", options: ["knocks", "is knocking", "are knocking", "knocked"], answer: 1 },
+                { q: "What ___ you doing at the moment?", options: ["is", "am", "are", "do"], answer: 2 },
+                { q: "They are not ___ television right now.", options: ["watch", "watching", "watches", "watched"], answer: 1 }
+            ],
+            "Module 4": [
+                { q: "Which month comes after March?", options: ["February", "April", "May", "June"], answer: 1 },
+                { q: "It is very cold in ___.", options: ["Summer", "Winter", "Autumn", "Spring"], answer: 1 },
+                { q: "Flowers bloom in ___.", options: ["Winter", "Spring", "Autumn", "Summer"], answer: 1 },
+                { q: "There are ___ months in a year.", options: ["10", "11", "12", "14"], answer: 2 },
+                { q: "It often ___ in the rainy season.", options: ["rains", "rain", "raining", "rained"], answer: 0 }
+            ],
+            "Module 5": [
+                { q: "Where do you cook food?", options: ["Bedroom", "Bathroom", "Kitchen", "Living room"], answer: 2 },
+                { q: "There ___ a big mirror in the bathroom.", options: ["is", "are", "am", "were"], answer: 0 },
+                { q: "There ___ three pillows on the bed.", options: ["is", "are", "am", "was"], answer: 1 },
+                { q: "The clothes are ___ the wardrobe.", options: ["in", "on", "under", "behind"], answer: 0 },
+                { q: "You sleep in the ___.", options: ["Kitchen", "Garden", "Bedroom", "Garage"], answer: 2 }
+            ],
+            "Module 6": [
+                { q: "Would you like ___ apple?", options: ["a", "an", "some", "any"], answer: 1 },
+                { q: "There isn't ___ milk left in the fridge.", options: ["some", "any", "many", "a"], answer: 1 },
+                { q: "Bananas, apples, and oranges are ___.", options: ["vegetables", "fruits", "drinks", "meat"], answer: 1 },
+                { q: "Carrots and broccoli are ___.", options: ["fruits", "vegetables", "desserts", "snacks"], answer: 1 },
+                { q: "Can I have ___ water, please?", options: ["some", "any", "a", "an"], answer: 0 }
+            ],
+            "Module 7": [
+                { q: "You ___ cross the road when the light is red.", options: ["must", "mustn't", "can", "should"], answer: 1 },
+                { q: "Turn ___ at the corner to find the library.", options: ["left", "straight", "over", "up"], answer: 0 },
+                { q: "You ___ keep quiet in the museum.", options: ["must", "mustn't", "shouldn't", "can't"], answer: 0 },
+                { q: "Where can you borrow books?", options: ["Hospital", "Library", "Supermarket", "Bank"], answer: 1 },
+                { q: "Where can you buy medicine?", options: ["Bakery", "Pharmacy", "Pet shop", "Cinema"], answer: 1 }
+            ],
+            "Module 8": [
+                { q: "Where ___ you yesterday morning?", options: ["was", "were", "are", "is"], answer: 1 },
+                { q: "She ___ at home yesterday.", options: ["was", "were", "are", "am"], answer: 0 },
+                { q: "They ___ at the park last Sunday.", options: ["was", "were", "is", "am"], answer: 1 },
+                { q: "I ___ sick yesterday, so I didn't go to school.", options: ["was", "were", "are", "be"], answer: 0 },
+                { q: "___ it scary at the cinema last night?", options: ["Was", "Were", "Is", "Are"], answer: 0 }
+            ],
+            "Module 9": [
+                { q: "Last week, we ___ to the beach.", options: ["go", "went", "going", "gone"], answer: 1 },
+                { q: "He ___ a big fish yesterday.", options: ["catch", "catches", "caught", "catching"], answer: 2 },
+                { q: "They ___ swimming in the sea on holiday.", options: ["enjoyed", "enjoy", "enjoys", "enjoying"], answer: 0 },
+                { q: "She ___ a seashell on the shore.", options: ["find", "found", "finds", "finding"], answer: 1 },
+                { q: "We ___ photos during our trip.", options: ["take", "took", "takes", "taking"], answer: 1 }
+            ],
+            "Module 10": [
+                { q: "A cheetah is ___ than a turtle.", options: ["fast", "faster", "fastest", "more fast"], answer: 1 },
+                { q: "The blue whale is the ___ animal in the world.", options: ["big", "bigger", "biggest", "most big"], answer: 2 },
+                { q: "An elephant is ___ than a mouse.", options: ["heavier", "heavy", "heaviest", "more heavy"], answer: 0 },
+                { q: "Mount Everest is the ___ mountain.", options: ["high", "higher", "highest", "most high"], answer: 2 },
+                { q: "Giraffes have the ___ necks.", options: ["long", "longer", "longest", "more long"], answer: 2 }
+            ]
+        };
 
-        <div class="form-group">
-          <label for="quiz-topic">Pilih Modul / Tajuk:</label>
-          <select id="quiz-topic" required>
-            <option value="Module 1 – Welcome!">Module 1 – Welcome!</option>
-            <option value="Module 2 – Every Day">Module 2 – Every Day</option>
-            <option value="Module 3 – Right Now">Module 3 – Right Now</option>
-            <option value="Module 4 – Year In, Year Out">Module 4 – Year In, Year Out</option>
-            <option value="Module 5 – My New House">Module 5 – My New House</option>
-            <option value="Module 6 – Food, Please!">Module 6 – Food, Please!</option>
-            <option value="Module 7 – Out and About">Module 7 – Out and About</option>
-            <option value="Module 8 – Where Were You Yesterday?">Module 8 – Where Were You Yesterday?</option>
-            <option value="Module 9 – On Holiday">Module 9 – On Holiday</option>
-            <option value="Module 10 – The World Around Us">Module 10 – The World Around Us</option>
-          </select>
-        </div>
+        /* ==========================================
+           2. GLOBAL STATE
+           ========================================== */
+        let state = {
+            studentName: '',
+            studentClass: '',
+            module: '',
+            questions: [],
+            currentQuestionIdx: 0,
+            userAnswers: [],
+            score: 0,
+            timer: null,
+            timeLeft: 30,
+            quizFinished: false
+        };
 
-        <button type="submit" class="btn">Mula Kuiz 🚀</button>
-      </form>
-
-      <button class="btn btn-secondary" onclick="showTeacherDashboard()" style="margin-top: 15px;">Rekod Guru 📊</button>
-      <div id="high-score-display" style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);"></div>
-    </div>
-
-    <!-- 2. QUIZ VIEW -->
-    <div id="quiz-view" class="view">
-      <div class="quiz-header">
-        <span id="question-tracker">Question 1/20</span>
-        <span id="score-tracker">Score: 0</span>
-        <span id="timer-display">⏱️ 15s</span>
-      </div>
-
-      <div class="timer-bar-container">
-        <div class="timer-bar" id="timer-bar"></div>
-      </div>
-
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-
-      <div class="question-card">
-        <div class="question-text" id="question-text">Loading question...</div>
-        <div class="options-grid" id="options-container"></div>
-      </div>
-    </div>
-
-    <!-- 3. RESULT VIEW -->
-    <div id="result-view" class="view">
-      <div class="result-card">
-        <div class="badge" id="result-badge">🏆</div>
-        <h2 id="result-title">Performance Message</h2>
-        <p class="subtitle" id="result-student-info">Student Info</p>
-        
-        <div class="score-display" id="result-score">0 / 20</div>
-        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;" id="result-percentage">0%</div>
-        <div class="status-msg" id="status-message">Calculating...</div>
-
-        <div class="status-sync" id="sync-status">Saving Score...</div>
-
-        <div class="action-grid">
-          <button class="btn btn-secondary" onclick="showReviewView()">Semak Jawapan 📝</button>
-          <button class="btn" onclick="restartQuiz()">Cuba Lagi 🔄</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. REVIEW VIEW -->
-    <div id="review-view" class="view">
-      <h2>Semakan Jawapan</h2>
-      <div id="review-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
-      <button class="btn" onclick="showResultView()">Kembali ke Keputusan ↩️</button>
-    </div>
-
-    <!-- 5. TEACHER DASHBOARD VIEW -->
-    <div id="teacher-view" class="view">
-      <h2>Rekod Keputusan Murid</h2>
-      <p class="subtitle">Senarai pencapaian murid yang tersimpan</p>
-
-      <div class="teacher-table-wrapper">
-        <table class="records-table">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Kelas</th>
-              <th>Modul</th>
-              <th>Markah</th>
-              <th>Peratus</th>
-            </tr>
-          </thead>
-          <tbody id="records-table-body">
-          </tbody>
-        </table>
-      </div>
-
-      <div class="action-grid">
-        <button class="btn btn-secondary" onclick="exportRecordsToCSV()">Eksport Excel/CSV 📥</button>
-        <button class="btn btn-danger" onclick="clearTeacherRecords()">Padam Semua Rekod 🗑️</button>
-      </div>
-      <button class="btn" onclick="showView('login-view')" style="margin-top: 10px;">Kembali ke Utama 🏠</button>
-    </div>
-  </div>
-
-  <script>
-    /* ==========================================================================
-       BANK SOALAN LENGKAP: MODULE 1 HINGGA MODULE 10 (20 Soalan Setiap Modul)
-       ========================================================================== */
-    const questionBank = {
-      "Module 1 – Welcome!": [
-        { q: 'Choose the correct number word for 20.', options: ['twenty', 'twelve', 'two', 'tenth'], answer: 'twenty' },
-        { q: 'She has got ________ hair. (lurus)', options: ['straight', 'curly', 'blonde', 'dark'], answer: 'straight' },
-        { q: 'He has got ________ hair. (keriting)', options: ['curly', 'long', 'straight', 'short'], answer: 'curly' },
-        { q: 'I ________ got brown eyes.', options: ['have', 'has', 'is', 'are'], answer: 'have' },
-        { q: 'She ________ got blonde hair.', options: ['has', 'have', 'is', 'are'], answer: 'has' },
-        { q: 'What is the number after forty-nine?', options: ['fifty', 'fourteen', 'forty', 'fifteen'], answer: 'fifty' },
-        { q: 'They ________ got big blue eyes.', options: ['have', 'has', 'does', 'is'], answer: 'have' },
-        { q: 'Has he got dark hair?\nNo, he ________.', options: ["hasn't", "haven't", "isn't", "doesn't"], answer: "hasn't" },
-        { q: 'Have you got thirty shells?\nYes, I ________.', options: ['have', 'has', 'do', 'got'], answer: 'have' },
-        { q: 'Greg has got fifty shells. Anna gives him ten more. How many shells has Greg got now?', options: ['sixty', 'forty', 'fifty', 'seventy'], answer: 'sixty' },
-        { q: 'Which sentence is correct?', options: ['She has got curly hair.', 'She have got curly hair.', 'She is got curly hair.', 'She has get curly hair.'], answer: 'She has got curly hair.' },
-        { q: 'Look at the clock. It is 3:00. What time is it?', options: ["It's three o'clock.", "It's half past three.", "It's thirty three.", "It's three fifteen."], answer: "It's three o'clock." },
-        { q: 'A: Has Smart Friends got blonde hair?\nB: Yes, she ________.', options: ['has', 'have', 'is', 'does'], answer: 'has' },
-        { q: 'Read and answer:\n"Sarah has got 80 stamps. She gives 30 stamps to John." How many stamps has Sarah got now?', options: ['fifty', 'ninety', 'one hundred', 'sixty'], answer: 'fifty' },
-        { q: 'Read and answer:\n"Tim has got dark hair and glasses. He has got sixty painted shells." Which statement is TRUE?', options: ['Tim has got 60 painted shells.', 'Tim has got straight blonde hair.', 'Tim hasn\'t got glasses.', 'Tim has got fifty shells.'], answer: 'Tim has got 60 painted shells.' },
-        { q: 'Change to a negative sentence:\n"We have got ninety board games."', options: ['We haven\'t got ninety board games.', 'We hasn\'t got ninety board games.', 'We don\'t got ninety board games.', 'We isn\'t got ninety board games.'], answer: 'We haven\'t got ninety board games.' },
-        { q: 'A: ________ your brother got curly hair?\nB: No, he hasn\'t.', options: ['Has', 'Have', 'Is', 'Do'], answer: 'Has' },
-        { q: 'Choose the correct question:', options: ['Have they got twenty green balloons?', 'Has they got twenty green balloons?', 'Does they have got twenty balloons?', 'Are they got twenty balloons?'], answer: 'Have they got twenty green balloons?' },
-        { q: 'A: How many teddy bears have you got?\nB: ________________________', options: ['I have got one hundred teddy bears.', 'Yes, I have.', 'No, I haven\'t.', 'She has got ten.'], answer: 'I have got one hundred teddy bears.' },
-        { q: 'A: Has Kelly got a purple school bag?\nB: ________________________', options: ['No, she hasn\'t. Hers is pink.', 'Yes, I have.', 'No, they haven\'t.', 'She got two.'], answer: 'No, she hasn\'t. Hers is pink.' }
-      ],
-
-      "Module 2 – Every Day": [
-        { q: 'What do you do in the morning? I ________ my teeth.', options: ['brush', 'comb', 'wash', 'do'], answer: 'brush' },
-        { q: 'A person who fixes teeth is a ________.', options: ['dentist', 'chef', 'firefighter', 'pilot'], answer: 'dentist' },
-        { q: 'A person who puts out fires is a ________.', options: ['firefighter', 'doctor', 'teacher', 'chef'], answer: 'firefighter' },
-        { q: 'I ________ my homework every evening.', options: ['do', 'make', 'brush', 'take'], answer: 'do' },
-        { q: 'He ________ to school by bus every day.', options: ['goes', 'go', 'going', 'went'], answer: 'goes' },
-        { q: 'I always ________ my hair before going to school.', options: ['comb', 'brush', 'wash', 'clean'], answer: 'comb' },
-        { q: 'She ________ (never) walks to school. She takes the bus.', options: ['never', 'always', 'sometimes', 'usually'], answer: 'never' },
-        { q: 'What ________ your mother do? She is a nurse.', options: ['does', 'do', 'is', 'are'], answer: 'does' },
-        { q: 'Do firefighters wear a uniform?\nYes, they ________.', options: ['do', 'does', 'are', 'have'], answer: 'do' },
-        { q: 'My father is a chef. He works in a ________.', options: ['restaurant', 'hospital', 'fire station', 'school'], answer: 'restaurant' },
-        { q: 'He usually ________ up at six o\'clock in the morning.', options: ['gets', 'get', 'getting', 'got'], answer: 'gets' },
-        { q: 'Does a dentist save people from burning buildings?\nNo, he ________.', options: ["doesn't", "don't", "isn't", "haven't"], answer: "doesn't" },
-        { q: 'Choose the correct adverb order:\n"I / go to bed at nine o\'clock / always"', options: ['I always go to bed at nine o\'clock.', 'I go to bed always at nine o\'clock.', 'Always I go to bed at nine o\'clock.', 'I go to bed at nine o\'clock always.'], answer: 'I always go to bed at nine o\'clock.' },
-        { q: 'Read and answer:\n"Encik Zaki is a pilot. He flies airplanes and travels to many countries. He loves his job." What does Encik Zaki do?', options: ['He flies airplanes.', 'He fixes teeth.', 'He puts out fires.', 'He cooks food in a hotel.'], answer: 'He flies airplanes.' },
-        { q: 'Read and answer:\n"Siti always does her homework after dinner. She never watches TV on weekdays." Which statement is TRUE?', options: ['Siti never watches TV on weekdays.', 'Siti does her homework in the morning.', 'Siti always watches TV after dinner.', 'Siti is a doctor.'], answer: 'Siti never watches TV on weekdays.' },
-        { q: 'Choose the sentence with correct grammar:', options: ['My sister sometimes catches the bus to work.', 'My sister catch sometimes the bus to work.', 'My sister catches sometimes bus to work.', 'My sister going to catch bus.'], answer: 'My sister sometimes catches the bus to work.' },
-        { q: 'A: ________ does your father work?\nB: He works at the hospital.', options: ['Where', 'What', 'Who', 'When'], answer: 'Where' },
-        { q: 'A: Do you always clean your room on weekends?\nB: ________________________', options: ['Yes, I always clean my room.', 'No, he doesn\'t.', 'I am cleaning my room.', 'She works in a school.'], answer: 'Yes, I always clean my room.' },
-        { q: 'Complete the sentence:\n"A lifeguard ________ people when they swim in the sea."', options: ['helps', 'help', 'helping', 'helped'], answer: 'helps' },
-        { q: 'A: What do you want to be when you grow up?\nB: ________________________', options: ['I want to be a doctor.', 'I go to school by car.', 'I brush my teeth.', 'I have got dark hair.'], answer: 'I want to be a doctor.' }
-      ],
-
-      "Module 3 – Right Now": [
-        { q: 'Look! She is ________ a book.', options: ['reading', 'reads', 'read', 'reader'], answer: 'reading' },
-        { q: 'They are ________ football at the field right now.', options: ['playing', 'plays', 'played', 'play'], answer: 'playing' },
-        { q: 'He is ________ in the swimming pool.', options: ['swimming', 'swims', 'swim', 'swam'], answer: 'swimming' },
-        { q: 'We are ________ a song in the classroom.', options: ['singing', 'sing', 'sings', 'sang'], answer: 'singing' },
-        { q: 'What is he doing? He is ________ gymnastics.', options: ['doing', 'making', 'playing', 'running'], answer: 'doing' },
-        { q: 'She is ________ karate with her instructor.', options: ['doing', 'playing', 'hitting', 'throwing'], answer: 'doing' },
-        { q: 'Is he playing baseball?\nNo, he ________.', options: ["isn't", "aren't", "doesn't", "don't"], answer: "isn't" },
-        { q: 'Are they doing gymnastics?\nYes, they ________.', options: ['are', 'is', 'do', 'have'], answer: 'are' },
-        { q: 'Look at Amin! He is ________ a big ball.', options: ['throwing', 'throws', 'throw', 'threw'], answer: 'throwing' },
-        { q: 'She isn\'t running. She is ________ a bike.', options: ['riding', 'driving', 'flying', 'walking'], answer: 'riding' },
-        { q: 'What ________ you doing right now?', options: ['are', 'is', 'am', 'do'], answer: 'are' },
-        { q: 'Choose the correct sentence:', options: ['They are playing volleyball.', 'They is playing volleyball.', 'They am playing volleyball.', 'They plays volleyball.'], answer: 'They are playing volleyball.' },
-        { q: 'Is Mei Ling exercising at the park?\nYes, she ________.', options: ['is', 'are', 'does', 'has'], answer: 'is' },
-        { q: 'Read and answer:\n"Adam and his friends are at the sports centre. Adam is playing basketball while Johan is running on the track." What is Johan doing?', options: ['He is running.', 'He is playing basketball.', 'He is swimming.', 'He is sleeping.'], answer: 'He is running.' },
-        { q: 'Read and answer:\n"Look at the children in the garden. Lisa is skipping, but Nina isn\'t skipping. She is hitting a tennis ball." Which statement is TRUE?', options: ['Nina is hitting a tennis ball.', 'Lisa is playing football.', 'Nina is skipping rope.', 'Lisa is playing tennis.'], answer: 'Nina is hitting a tennis ball.' },
-        { q: 'Form a correct question:\n"he / is / playing / table tennis / ?"', options: ['Is he playing table tennis?', 'He is playing table tennis?', 'Playing table tennis is he?', 'Is playing he table tennis?'], answer: 'Is he playing table tennis?' },
-        { q: 'A: Are you doing your homework right now?\nB: ________________________', options: ['No, I\'m not. I\'m drawing a picture.', 'Yes, he is.', 'No, they aren\'t.', 'I do my homework every day.'], answer: 'No, I\'m not. I\'m drawing a picture.' },
-        { q: 'A: What is your sister doing in the kitchen?\nB: ________________________', options: ['She is making a cake.', 'She likes apples.', 'She cooks every day.', 'She is a chef.'], answer: 'She is making a cake.' },
-        { q: 'Fix the error:\n"The boys is playing computer games in the room."', options: ['The boys ARE playing computer games.', 'The boys AM playing computer games.', 'The boys PLAYING computer games.', 'The boys DOES playing computer games.'], answer: 'The boys ARE playing computer games.' },
-        { q: 'A: Is your father washing the car?\nB: ________________________', options: ['Yes, he is.', 'Yes, she is.', 'No, I am not.', 'He washes the car.'], answer: 'Yes, he is.' }
-      ],
-
-      "Module 4 – Year In, Year Out": [
-        { q: 'How many months are there in a year?', options: ['twelve', 'ten', 'seven', 'fourteen'], answer: 'twelve' },
-        { q: 'What is the first month of the year?', options: ['January', 'February', 'December', 'March'], answer: 'January' },
-        { q: 'In autumn, trees drop their ________.', options: ['leaves', 'snow', 'sun', 'rain'], answer: 'leaves' },
-        { q: 'It is very cold and snowing in ________.', options: ['winter', 'summer', 'spring', 'autumn'], answer: 'winter' },
-        { q: 'Flowers bloom and grow during ________.', options: ['spring', 'winter', 'autumn', 'summer'], answer: 'spring' },
-        { q: 'It is very hot and sunny in ________.', options: ['summer', 'winter', 'autumn', 'spring'], answer: 'summer' },
-        { q: 'When is your birthday?\nIt\'s ________ August.', options: ['in', 'on', 'at', 'by'], answer: 'in' },
-        { q: 'My birthday is ________ the 5th of May.', options: ['on', 'in', 'at', 'to'], answer: 'on' },
-        { q: 'Which month comes right after July?', options: ['August', 'June', 'September', 'October'], answer: 'August' },
-        { q: 'What\'s your favourite season?\nI like ________ because I can go to the beach.', options: ['summer', 'winter', 'autumn', 'snow'], answer: 'summer' },
-        { q: 'In Malaysia, it is often hot and ________.', options: ['rainy', 'snowy', 'freezing', 'icy'], answer: 'rainy' },
-        { q: 'Choose the correct preposition:\n"School starts _____ September."', options: ['in', 'on', 'at', 'under'], answer: 'in' },
-        { q: 'Choose the correct preposition:\n"The party is _____ Saturday night."', options: ['on', 'in', 'at', 'by'], answer: 'on' },
-        { q: 'Read and answer:\n"In Australia, winter is from June to August. It is cold and windy. People wear warm coats and boots." When is winter in Australia?', options: ['From June to August', 'From December to February', 'In January only', 'In November'], answer: 'From June to August' },
-        { q: 'Read and answer:\n"Mei Mei\'s birthday is in the last month of the year. She always has a Christmas-themed party." Which month is Mei Mei\'s birthday?', options: ['December', 'January', 'November', 'October'], answer: 'December' },
-        { q: 'Choose the sentence with correct prepositions:', options: ['My birthday is on 12th October in spring.', 'My birthday is in 12th October on spring.', 'My birthday is at 12th October in spring.', 'My birthday is on 12th October at spring.'], answer: 'My birthday is on 12th October in spring.' },
-        { q: 'A: What\'s the weather like in winter in Canada?\nB: ________________________', options: ['It is cold and it snows.', 'It is hot and sunny.', 'It is warm and flowers bloom.', 'It is windy and leaves fall.'], answer: 'It is cold and it snows.' },
-        { q: 'A: When is Merdeka Day celebrated in Malaysia?\nB: ________________________', options: ['It is on 31st August.', 'It is in December.', 'It is on Monday.', 'It is raining.'], answer: 'It is on 31st August.' },
-        { q: 'Which month is NOT in the second half of the year?', options: ['April', 'August', 'October', 'December'], answer: 'April' },
-        { q: 'A: What do people do in spring?\nB: ________________________', options: ['They plant flowers and go for picnics.', 'They build snowmen.', 'They go ice-skating.', 'They rake fallen leaves.'], answer: 'They plant flowers and go for picnics.' }
-      ],
-
-      "Module 5 – My New House": [
-        { q: 'Where do you sleep? In the ________.', options: ['bedroom', 'kitchen', 'bathroom', 'garden'], answer: 'bedroom' },
-        { q: 'Where does your mother cook food? In the ________.', options: ['kitchen', 'living room', 'garage', 'dining room'], answer: 'kitchen' },
-        { q: 'We sit on a comfy ________ in the living room.', options: ['sofa', 'fridge', 'stove', 'sink'], answer: 'sofa' },
-        { q: 'Keep the milk and food cold in the ________.', options: ['fridge', 'cupboard', 'armchair', 'bookcase'], answer: 'fridge' },
-        { q: 'There are many clothes inside the ________.', options: ['wardrobe', 'bookcase', 'mirror', 'carpet'], answer: 'wardrobe' },
-        { q: 'We park our family car in the ________.', options: ['garage', 'hall', 'bathroom', 'kitchen'], answer: 'garage' },
-        { q: 'Whose shoe is this?\nIt\'s ________. (saya punya)', options: ['mine', 'my', 'me', 'I'], answer: 'mine' },
-        { q: 'Whose bag is that?\nIt\'s ________. (dia wanita punya)', options: ['hers', 'her', 'she', 'him'], answer: 'hers' },
-        { q: 'Are these coats yours?\nYes, they are ________.', options: ['ours', 'our', 'we', 'us'], answer: 'ours' },
-        { q: 'There ________ a big mirror on the wall.', options: ['is', 'are', 'were', 'have'], answer: 'is' },
-        { q: 'There ________ three slippers behind the door.', options: ['are', 'is', 'was', 'be'], answer: 'are' },
-        { q: 'Where is the cat? It is ________ the table.', options: ['under', 'on top', 'between of', 'in front'], answer: 'under' },
-        { q: 'Is there a picture on the wall?\nYes, there ________.', options: ['is', 'are', 'has', 'does'], answer: 'is' },
-        { q: 'Read and answer:\n"This is my new house. Downstairs, there is a large kitchen and a living room. Upstairs, there are three bedrooms." Where are the bedrooms located?', options: ['Upstairs', 'Downstairs', 'In the garage', 'In the garden'], answer: 'Upstairs' },
-        { q: 'Read and answer:\n"Look at these painted rocks. They belong to Ali and Raju." Whose painted rocks are these?', options: ['They are theirs.', 'They are mine.', 'They are hers.', 'They are ours.'], answer: 'They are theirs.' },
-        { q: 'Choose the correct question format:', options: ['Whose ball is this?', 'Who ball is this?', 'Whos ball is this?', 'Whose ball this is?'], answer: 'Whose ball is this?' },
-        { q: 'A: Is this pen yours?\nB: No, it isn\'t mine. It belongs to Kelly. It\'s ________.', options: ['hers', 'his', 'yours', 'mine'], answer: 'hers' },
-        { q: 'Where is the sofa located?\nIt is ________ the two armchairs.', options: ['between', 'next', 'behind of', 'on'], answer: 'between' },
-        { q: 'Change to plural form:\n"There is a cushion on the bed."', options: ['There are cushions on the bed.', 'There is cushions on the bed.', 'There are cushion on the bed.', 'There be cushions on the bed.'], answer: 'There are cushions on the bed.' },
-        { q: 'A: Are those trainers yours?\nB: ________________________', options: ['No, they aren\'t mine. They are John\'s.', 'Yes, it is mine.', 'They are in the bedroom.', 'There are under the bed.'], answer: 'No, they aren\'t mine. They are John\'s.' }
-      ],
-
-      "Module 6 – Food, Please!": [
-        { q: 'Milk, cheese, and butter are made from milk. They are ________ products.', options: ['dairy', 'meat', 'fruit', 'vegetable'], answer: 'dairy' },
-        { q: 'Bananas, apples, and oranges are ________.', options: ['fruits', 'vegetables', 'drinks', 'snacks'], answer: 'fruits' },
-        { q: 'I would like a slice of ________, please.', options: ['pizza', 'soup', 'water', 'milk'], answer: 'pizza' },
-        { q: 'Can I have a glass of ________? I am thirsty.', options: ['water', 'pancake', 'rice', 'chicken'], answer: 'water' },
-        { q: 'Carrots and onions are ________.', options: ['vegetables', 'fruits', 'sweets', 'juices'], answer: 'vegetables' },
-        { q: 'Chickens lay ________ that we eat for breakfast.', options: ['eggs', 'apples', 'lemons', 'beans'], answer: 'eggs' },
-        { q: 'Have we got ________ tomatoes in the fridge?', options: ['any', 'some', 'a', 'an'], answer: 'any' },
-        { q: 'There are ________ apples on the dining table.', options: ['some', 'any', 'much', 'a little'], answer: 'some' },
-        { q: 'Is there ________ milk left in the carton?', options: ['any', 'some', 'many', 'a'], answer: 'any' },
-        { q: 'I want to make an omelette. I need some ________.', options: ['eggs', 'flour', 'sugar', 'apples'], answer: 'eggs' },
-        { q: 'There isn\'t ________ orange juice in the pitcher.', options: ['any', 'some', 'many', 'a'], answer: 'any' },
-        { q: 'Would you like ________ lemonade?', options: ['some', 'any', 'a', 'an'], answer: 'some' },
-        { q: 'Choose the countable noun:', options: ['biscuits', 'milk', 'water', 'soup'], answer: 'biscuits' },
-        { q: 'Read and answer:\n"To make a healthy salad, cut some lettuce, cucumbers, and tomatoes. Add some olive oil and a little salt." Which item is NOT used in the salad recipe?', options: ['Sugar', 'Lettuce', 'Cucumbers', 'Tomatoes'], answer: 'Sugar' },
-        { q: 'Read and answer:\n"We haven\'t got any flour or sugar, so we can\'t bake a cake today. Let\'s go to the grocery store." Why can\'t they bake a cake?', options: ['They haven\'t got flour or sugar.', 'They don\'t have eggs.', 'They don\'t like cake.', 'The oven is broken.'], answer: 'They haven\'t got flour or sugar.' },
-        { q: 'Choose the uncountable noun:', options: ['rice', 'apple', 'banana', 'egg'], answer: 'rice' },
-        { q: 'A: Have we got any chocolate?\nB: ________________________', options: ['Yes, we have got some.', 'No, we got some.', 'Yes, we haven\'t.', 'No, there are.'], answer: 'Yes, we have got some.' },
-        { q: 'Complete the sentence:\n"There ________ some orange juice in the glass."', options: ['is', 'are', 'were', 'have'], answer: 'is' },
-        { q: 'Complete the sentence:\n"There ________ some peppers on the pizza."', options: ['are', 'is', 'was', 'be'], answer: 'are' },
-        { q: 'A: What would you like to eat?\nB: ________________________', options: ['I\'d like a cheeseburger, please.', 'I like swimming.', 'Yes, I do.', 'There is some milk.'], answer: 'I\'d like a cheeseburger, please.' }
-      ],
-
-      "Module 7 – Out and About": [
-        { q: 'Stop! Look at the ________ light before crossing the road.', options: ['traffic', 'street', 'lamp', 'sun'], answer: 'traffic' },
-        { q: 'Always wear a ________ when riding a bicycle.', options: ['helmet', 'hat', 'cap', 'crown'], answer: 'helmet' },
-        { q: 'Fasten your ________ when you are in a car.', options: ['seatbelt', 'belt', 'rope', 'strap'], answer: 'seatbelt' },
-        { q: 'Look left and right before you ________ the street.', options: ['cross', 'walk', 'run', 'jump'], answer: 'cross' },
-        { q: 'You must turn ________ (kiri) at the junction.', options: ['left', 'right', 'straight', 'back'], answer: 'left' },
-        { q: 'Go ________ on! Do not turn left or right.', options: ['straight', 'left', 'right', 'around'], answer: 'straight' },
-        { q: 'You ________ walk on the road when cars are coming fast.', options: ["mustn't", 'must', 'should', 'can'], answer: "mustn't" },
-        { q: 'You ________ cross the road at the zebra crossing.', options: ['must', "mustn't", "don't", 'shouldn\'t'], answer: 'must' },
-        { q: 'You ________ play with fire. It is dangerous.', options: ["mustn't", 'must', 'can', 'should'], answer: "mustn't" },
-        { q: 'You ________ listen to your teacher during class.', options: ['must', "mustn't", 'cannot', 'couldn\'t'], answer: 'must' },
-        { q: 'How do you get to school?\nI go ________ foot.', options: ['on', 'by', 'in', 'with'], answer: 'on' },
-        { q: 'My father goes to work ________ car.', options: ['by', 'on', 'in', 'with'], answer: 'by' },
-        { q: 'Choose the correct rule for safety:', options: ['Fasten your seatbelt.', 'Play on the street.', 'Cross when light is red.', 'Don\'t wear a helmet.'], answer: 'Fasten your seatbelt.' },
-        { q: 'Read and answer:\n"When riding a bike, wear a helmet and use bike paths. Don\'t listen to music while riding." What must you wear when riding a bike?', options: ['A helmet', 'A coat', 'Headphones', 'A hat'], answer: 'A helmet' },
-        { q: 'Read and answer:\n"At the zoo, you must keep quiet near the animals. You mustn\'t feed the monkeys." What is forbidden at the zoo?', options: ['Feeding the monkeys', 'Walking slowly', 'Looking at animals', 'Keeping quiet'], answer: 'Feeding the monkeys' },
-        { q: 'Choose the correct prohibition sentence:', options: ['You mustn\'t touch the paintings in the museum.', 'You must touch the paintings in the museum.', 'You can touch paintings in museum.', 'You touching paintings.'], answer: 'You mustn\'t touch the paintings in the museum.' },
-        { q: 'A: How does your mother go to the supermarket?\nB: ________________________', options: ['She goes by car.', 'She go on car.', 'She goes in foot.', 'She drive bike.'], answer: 'She goes by car.' },
-        { q: 'Fix the error:\n"You mustn\'t to shout in the library."', options: ['You mustn\'t shout in the library.', 'You must to shout in library.', 'You non shout in library.', 'You isn\'t shout.'], answer: 'You mustn\'t shout in the library.' },
-        { q: 'A: Must I wear a seatbelt in the back seat?\nB: ________________________', options: ['Yes, you must.', 'No, you don\'t.', 'Yes, I am.', 'No, he mustn\'t.'], answer: 'Yes, you must.' },
-        { q: 'A: Excuse me, how do I get to the park?\nB: ________________________', options: ['Go straight on and turn right.', 'Yes, it is.', 'By bus.', 'It is big.'], answer: 'Go straight on and turn right.' }
-      ],
-
-      "Module 8 – Where Were You Yesterday?": [
-        { q: 'Where ________ you yesterday afternoon?', options: ['were', 'was', 'are', 'is'], answer: 'were' },
-        { q: 'I ________ at the cinema yesterday evening.', options: ['was', 'were', 'am', 'is'], answer: 'was' },
-        { q: 'She ________ at home yesterday because she was sick.', options: ['was', 'were', 'is', 'are'], answer: 'was' },
-        { q: 'They ________ at the shopping centre last Sunday.', options: ['were', 'was', 'are', 'be'], answer: 'were' },
-        { q: 'The film was ________! I loved it very much.', options: ['great', 'boring', 'scary', 'noisy'], answer: 'great' },
-        { q: 'The monkey show was ________. We laughed a lot!', options: ['funny', 'scary', 'boring', 'sad'], answer: 'funny' },
-        { q: 'Was the movie scary?\nYes, it ________.', options: ['was', 'were', 'is', 'does'], answer: 'was' },
-        { q: 'Were they at the park yesterday?\nNo, they ________.', options: ["weren't", "wasn't", "aren't", "don't"], answer: "weren't" },
-        { q: 'Was John at the circus last night?\nNo, he ________.', options: ["wasn't", "weren't", "isn't", "doesn't"], answer: "wasn't" },
-        { q: 'How ________ the popcorn? It was delicious!', options: ['was', 'were', 'is', 'are'], answer: 'was' },
-        { q: 'Where ________ she yesterday morning?', options: ['was', 'were', 'is', 'did'], answer: 'was' },
-        { q: 'The book was ________. I fell asleep while reading it.', options: ['boring', 'funny', 'exciting', 'great'], answer: 'boring' },
-        { q: 'Choose the correct past simple form of "is/are":', options: ['was / were', 'be / been', 'is / are', 'was / was'], answer: 'was / were' },
-        { q: 'Read and answer:\n"Yesterday morning, Siti and Amy were at the museum. The museum was very quiet." Where were Siti and Amy yesterday morning?', options: ['At the museum', 'At the cinema', 'At home', 'At the circus'], answer: 'At the museum' },
-        { q: 'Read and answer:\n"Ali was at the cinema last night. The movie was scary, but the popcorn was delicious." How was the movie?', options: ['It was scary.', 'It was boring.', 'It was funny.', 'It was delicious.'], answer: 'It was scary.' },
-        { q: 'Choose the sentence with correct grammar:', options: ['We were at the beach yesterday.', 'We was at the beach yesterday.', 'We are at beach yesterday.', 'We be at beach yesterday.'], answer: 'We were at the beach yesterday.' },
-        { q: 'A: Was the circus exciting?\nB: ________________________', options: ['Yes, it was!', 'Yes, they were.', 'No, it is not.', 'I was at school.'], answer: 'Yes, it was!' },
-        { q: 'Change to a negative sentence:\n"He was at the toy shop yesterday."', options: ['He wasn\'t at the toy shop yesterday.', 'He weren\'t at the toy shop yesterday.', 'He isn\'t at the toy shop yesterday.', 'He don\'t was at toy shop.'], answer: 'He wasn\'t at the toy shop yesterday.' },
-        { q: 'A: Were you and your brother at the zoo yesterday?\nB: Yes, ________.', options: ['we were', 'I was', 'they were', 'you were'], answer: 'we were' },
-        { q: 'A: Where were you yesterday afternoon?\nB: ________________________', options: ['I was at the library.', 'I am at the library.', 'I go to the library.', 'Yes, I was.'], answer: 'I was at the library.' }
-      ],
-
-      "Module 9 – On Holiday": [
-        { q: 'We went to the ________ and played with sand.', options: ['beach', 'forest', 'mountain', 'market'], answer: 'beach' },
-        { q: 'I picked up beautiful ________ on the beach.', options: ['shells', 'trees', 'fish', 'rocks'], answer: 'shells' },
-        { q: 'Yesterday, we ________ (go) to the zoo.', options: ['went', 'go', 'going', 'goes'], answer: 'went' },
-        { q: 'They ________ (swim) in the clear blue sea.', options: ['swam', 'swim', 'swimming', 'swims'], answer: 'swam' },
-        { q: 'He ________ (find) a big shiny shell on the sand.', options: ['found', 'find', 'finded', 'finds'], answer: 'found' },
-        { q: 'She ________ (take) many pictures during the trip.', options: ['took', 'take', 'takes', 'taking'], answer: 'took' },
-        { q: 'Did you pack your bag?\nYes, I ________.', options: ['did', 'do', 'was', 'have'], answer: 'did' },
-        { q: 'Did they buy any souvenirs?\nNo, they ________.', options: ["didn't", "don't", "weren't", "haven't"], answer: "didn't" },
-        { q: 'We ________ (eat) delicious seafood last night.', options: ['ate', 'eat', 'eaten', 'eats'], answer: 'ate' },
-        { q: 'My father ________ (drive) the car to Malacca.', options: ['drove', 'drive', 'drived', 'driving'], answer: 'drove' },
-        { q: 'She ________ (see) a jellyfish in the ocean.', options: ['saw', 'see', 'seed', 'seeing'], answer: 'saw' },
-        { q: 'Did he catch a fish?\nNo, he ________.', options: ["didn't", "don't", "wasn't", "doesn't"], answer: "didn't" },
-        { q: 'Choose the correct past simple verb for "make":', options: ['made', 'maked', 'make', 'making'], answer: 'made' },
-        { q: 'Read and answer:\n"Last weekend, Encik Lee\'s family went to the beach. The children built a big sandcastle and caught little crabs." What did the children build?', options: ['A big sandcastle', 'A wooden house', 'A boat', 'A shell tower'], answer: 'A big sandcastle' },
-        { q: 'Read and answer:\n"Maya went to Sabah on holiday. She took photos of monkeys and swam in the river." Which activity did Maya NOT do?', options: ['She bought clothes.', 'She took photos.', 'She swam in the river.', 'She went to Sabah.'], answer: 'She bought clothes.' },
-        { q: 'Choose the sentence with correct past tense:', options: ['We bought ice cream at the beach.', 'We buyed ice cream at the beach.', 'We buying ice cream at beach.', 'We buys ice cream at beach.'], answer: 'We bought ice cream at the beach.' },
-        { q: 'Form a question in past tense:\n"you / did / go / where / last holiday / ?"', options: ['Where did you go last holiday?', 'Where you did go last holiday?', 'Did where you go last holiday?', 'Where do you went last holiday?'], answer: 'Where did you go last holiday?' },
-        { q: 'A: Did your brother climb a mountain?\nB: ________________________', options: ['No, he didn\'t. He went to the forest.', 'Yes, he does.', 'No, he isn\'t.', 'He climbs mountain.'], answer: 'No, he didn\'t. He went to the forest.' },
-        { q: 'A: What did you do on your holiday?\nB: ________________________', options: ['I swam in the sea and collected shells.', 'I swim in sea every day.', 'I am swimming in sea.', 'I will go to beach.'], answer: 'I swam in the sea and collected shells.' },
-        { q: 'Change to past tense:\n"I sleep in a tent at night."', options: ['I slept in a tent at night.', 'I sleeped in a tent at night.', 'I was sleep in a tent.', 'I am slept in a tent.'], answer: 'I slept in a tent at night.' }
-      ],
-
-      "Module 10 – The World Around Us": [
-        { q: 'A cheetah is ________ than a cat.', options: ['faster', 'fast', 'fastest', 'more fast'], answer: 'faster' },
-        { q: 'An elephant is ________ than a mouse.', options: ['bigger', 'big', 'biggest', 'more big'], answer: 'bigger' },
-        { q: 'A giraffe is ________ than a horse.', options: ['taller', 'tall', 'tallest', 'more tall'], answer: 'taller' },
-        { q: 'A blue whale is the ________ animal in the world.', options: ['biggest', 'bigger', 'big', 'most big'], answer: 'biggest' },
-        { q: 'A turtle is ________ than a rabbit.', options: ['slower', 'slow', 'slowest', 'more slow'], answer: 'slower' },
-        { q: 'Which planet is closest to the Sun?', options: ['Mercury', 'Jupiter', 'Saturn', 'Neptune'], answer: 'Mercury' },
-        { q: 'Which is the biggest planet in our solar system?', options: ['Jupiter', 'Earth', 'Mars', 'Venus'], answer: 'Jupiter' },
-        { q: 'A gorilla is ________ than a monkey.', options: ['stronger', 'strong', 'strongest', 'more strong'], answer: 'stronger' },
-        { q: 'A dolphin is ________ than a shark.', options: ['nicer', 'nice', 'nicest', 'more nice'], answer: 'nicer' },
-        { q: 'The sun is ________ than the moon.', options: ['hotter', 'hot', 'hottest', 'more hot'], answer: 'hotter' },
-        { q: 'Choose the correct comparative form of "heavy":', options: ['heavier', 'heavyer', 'more heavy', 'heaviest'], answer: 'heavier' },
-        { q: 'Choose the correct comparative form of "small":', options: ['smaller', 'small', 'smallest', 'more small'], answer: 'smaller' },
-        { q: 'Saturn has beautiful ________ around it.', options: ['rings', 'moons', 'stars', 'trees'], answer: 'rings' },
-        { q: 'Read and answer:\n"Cheetahs are the fastest land animals. They can run up to 120 km/h. They are much faster than lions." Which animal is faster than a lion?', options: ['A cheetah', 'A dog', 'A horse', 'An elephant'], answer: 'A cheetah' },
-        { q: 'Read and answer:\n"Earth is our home planet. It is smaller than Jupiter, but bigger than Mercury." Which statement is TRUE?', options: ['Earth is bigger than Mercury.', 'Earth is bigger than Jupiter.', 'Mercury is the biggest planet.', 'Jupiter is smaller than Earth.'], answer: 'Earth is bigger than Mercury.' },
-        { q: 'Choose the grammatically correct sentence:', options: ['A blue whale is heavier than an elephant.', 'A blue whale is heavyer than an elephant.', 'A blue whale is more heavy than elephant.', 'A blue whale is heaviest than elephant.'], answer: 'A blue whale is heavier than an elephant.' },
-        { q: 'A: Which animal is noisier, a parrot or a fish?\nB: ________________________', options: ['A parrot is noisier than a fish.', 'A fish is noisier.', 'Parrots are quiet.', 'Fish can talk.'], answer: 'A parrot is noisier than a fish.' },
-        { q: 'Fill in the blank with the superlative form:\n"Saturn is one of the ________ (pretty) planets."', options: ['prettiest', 'prettier', 'pretty', 'more pretty'], answer: 'prettiest' },
-        { q: 'A: Is Mars hotter than Venus?\nB: No, Venus is ________ than Mars.', options: ['hotter', 'colder', 'smaller', 'slower'], answer: 'hotter' },
-        { q: 'A: Which is the smallest planet?\nB: ________________________', options: ['Mercury is the smallest planet.', 'Jupiter is very big.', 'Earth is where we live.', 'Sun is a star.'], answer: 'Mercury is the smallest planet.' }
-      ]
-    };
-
-    // State Variables
-    let currentQuestions = [];
-    let currentQuestionIdx = 0;
-    let score = 0;
-    let timer = null;
-    let timeLeft = 15;
-    let studentData = { name: '', class: '', topic: '' };
-    let userAnswers = [];
-
-    // DOM Elements
-    const views = document.querySelectorAll('.view');
-    const loginForm = document.getElementById('login-form');
-    const themeBtn = document.getElementById('theme-btn');
-    const homeBtn = document.getElementById('home-btn');
-
-    // Theme Switcher
-    themeBtn.addEventListener('click', () => {
-      const currentTheme = document.body.getAttribute('data-theme');
-      if (currentTheme === 'dark') {
-        document.body.removeAttribute('data-theme');
-        themeBtn.textContent = '🌙';
-      } else {
-        document.body.setAttribute('data-theme', 'dark');
-        themeBtn.textContent = '☀️';
-      }
-    });
-
-    homeBtn.addEventListener('click', () => {
-      if (confirm('Adakah anda pasti mahu kembali ke menu utama? Kemajuan kuiz anda tidak akan disimpan.')) {
-        clearInterval(timer);
-        showView('login-view');
-      }
-    });
-
-    function showView(viewId) {
-      views.forEach(v => v.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
-    }
-
-    // Start Quiz
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      studentData.name = document.getElementById('student-name').value.trim();
-      studentData.class = document.getElementById('student-class').value.trim();
-      studentData.topic = document.getElementById('quiz-topic').value;
-
-      let bank = questionBank[studentData.topic] || questionBank["Module 1 – Welcome!"];
-      currentQuestions = [...bank].sort(() => Math.random() - 0.5);
-      
-      currentQuestionIdx = 0;
-      score = 0;
-      userAnswers = [];
-      
-      showView('quiz-view');
-      loadQuestion();
-    });
-
-    function loadQuestion() {
-      clearInterval(timer);
-      const qData = currentQuestions[currentQuestionIdx];
-      
-      document.getElementById('question-tracker').textContent = `Question ${currentQuestionIdx + 1}/${currentQuestions.length}`;
-      document.getElementById('score-tracker').textContent = `Score: ${score}`;
-      document.getElementById('question-text').textContent = qData.q;
-      
-      const optionsContainer = document.getElementById('options-container');
-      optionsContainer.innerHTML = '';
-
-      qData.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = opt;
-        btn.onclick = () => handleAnswer(opt);
-        optionsContainer.appendChild(btn);
-      });
-
-      const progressPercent = ((currentQuestionIdx) / currentQuestions.length) * 100;
-      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-
-      startTimer();
-    }
-
-    function startTimer() {
-      timeLeft = 15;
-      const timerDisplay = document.getElementById('timer-display');
-      const timerBar = document.getElementById('timer-bar');
-      
-      timerDisplay.textContent = `⏱️ ${timeLeft}s`;
-      timerBar.style.width = '100%';
-
-      timer = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = `⏱️ ${timeLeft}s`;
-        timerBar.style.width = `${(timeLeft / 15) * 100}%`;
-
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          handleAnswer(null);
-        }
-      }, 1000);
-    }
-
-    function handleAnswer(selectedOpt) {
-      clearInterval(timer);
-      const qData = currentQuestions[currentQuestionIdx];
-      const isCorrect = selectedOpt === qData.answer;
-      
-      userAnswers.push({
-        question: qData.q,
-        selected: selectedOpt || 'Tiada Jawapan (Masa Tamat)',
-        correct: qData.answer,
-        isCorrect: isCorrect
-      });
-
-      if (isCorrect) score++;
-
-      const optionBtns = document.querySelectorAll('.option-btn');
-      optionBtns.forEach(btn => {
-        btn.disabled = true;
-        if (btn.textContent === qData.answer) {
-          btn.classList.add('correct');
-        } else if (btn.textContent === selectedOpt) {
-          btn.classList.add('wrong');
-        }
-      });
-
-      setTimeout(() => {
-        currentQuestionIdx++;
-        if (currentQuestionIdx < currentQuestions.length) {
-          loadQuestion();
-        } else {
-          finishQuiz();
-        }
-      }, 1200);
-    }
-
-    function finishQuiz() {
-      showView('result-view');
-      const total = currentQuestions.length;
-      const percentage = Math.round((score / total) * 100);
-
-      document.getElementById('result-student-info').textContent = `${studentData.name} (${studentData.class}) - ${studentData.topic}`;
-      document.getElementById('result-score').textContent = `${score} / ${total}`;
-      document.getElementById('result-percentage').textContent = `${percentage}%`;
-
-      const statusMsg = document.getElementById('status-message');
-      const badge = document.getElementById('result-badge');
-
-      if (percentage >= 80) {
-        badge.textContent = '🏆';
-        statusMsg.textContent = 'Cemerlang! Syabas!';
-        statusMsg.style.background = '#c6f6d5';
-        statusMsg.style.color = '#22543d';
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      } else if (percentage >= 50) {
-        badge.textContent = '🌟';
-        statusMsg.textContent = 'Tahniah! Usaha yang baik!';
-        statusMsg.style.background = '#feebc8';
-        statusMsg.style.color = '#744210';
-      } else {
-        badge.textContent = '💪';
-        statusMsg.textContent = 'Jangan putus asa, cuba lagi!';
-        statusMsg.style.background = '#fed7d7';
-        statusMsg.style.color = '#742a2a';
-      }
-
-      saveRecord(studentData.name, studentData.class, studentData.topic, score, total, percentage);
-      sendToGoogleSheets();
-    }
-
-    function showReviewView() {
-      const container = document.getElementById('review-container');
-      container.innerHTML = '';
-
-      userAnswers.forEach((ans, idx) => {
-        const item = document.createElement('div');
-        item.className = 'review-item';
-        item.innerHTML = `
-          <div class="review-q">${idx + 1}. ${ans.question}</div>
-          <div class="review-a ${ans.isCorrect ? 'correct-a' : 'user-wrong'}">Jawapan Anda: ${ans.selected}</div>
-          ${!ans.isCorrect ? `<div class="review-a correct-a">Jawapan Betul: ${ans.correct}</div>` : ''}
-        `;
-        container.appendChild(item);
-      });
-
-      showView('review-view');
-    }
-
-    function showResultView() {
-      showView('result-view');
-    }
-
-    function restartQuiz() {
-      showView('login-view');
-    }
-
-    /* ==========================================================================
-       FUNGSI REKOD GURU (TEACHER DASHBOARD)
-       ========================================================================== */
-    function saveRecord(name, studentClass, topic, score, total, percentage) {
-      const records = JSON.parse(localStorage.getItem('quizRecords') || '[]');
-      records.push({
-        name,
-        class: studentClass,
-        topic,
-        score: `${score}/${total}`,
-        percentage: `${percentage}%`,
-        date: new Date().toLocaleDateString()
-      });
-      localStorage.setItem('quizRecords', JSON.stringify(records));
-      document.getElementById('sync-status').textContent = 'Rekod berjaya disimpan!';
-    }
-
-    
-    async function sendToGoogleSheets() {
-      const total=currentQuestions.length;
-      const percentage=Math.round((score/total)*100);
-      const data={
-        name:studentData.name,
-        class:studentData.class,
-        module:studentData.topic,
-        score:`${score}/${total}`,
-        percentage:`${percentage}%`,
-        date:new Date().toLocaleDateString(),
-        time:new Date().toLocaleTimeString()
-      };
-      try{
-        await fetch('https://script.google.com/macros/s/AKfycbxE1VmbtwtVKSlNuBMTQJnbMxZIYQXoz0C2fMePYBgCv5srU6VWrsgJyrl2RHOIrnMh/exec',{
-          method:'POST',
-          headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body:JSON.stringify(data)
+        /* ==========================================
+           3. INITIALIZATION & THEME TOGGLE
+           ========================================== */
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
         });
-        document.getElementById('sync-status').textContent='✅ Score saved to Google Sheets';
-      }catch(e){
-        document.getElementById('sync-status').textContent='❌ Failed to save score';
-      }
-    }
 
-function showTeacherDashboard() {
-      const records = JSON.parse(localStorage.getItem('quizRecords') || '[]');
-      const tbody = document.getElementById('records-table-body');
-      tbody.innerHTML = '';
+        function initTheme() {
+            const btn = document.getElementById('themeToggleBtn');
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
 
-      if (records.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tiada rekod disimpan lagi.</td></tr>';
-      } else {
-        records.forEach(rec => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${rec.name}</td>
-            <td>${rec.class}</td>
-            <td>${rec.topic}</td>
-            <td>${rec.score}</td>
-            <td>${rec.percentage}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      }
+            btn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                icon.textContent = isDark ? '☀️' : '🌙';
+                text.textContent = isDark ? 'Light' : 'Dark';
+            });
+        }
 
-      showView('teacher-view');
-    }
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
 
-    function clearTeacherRecords() {
-      if (confirm('Adakah anda pasti mahu memadam semua rekod murid?')) {
-        localStorage.removeItem('quizRecords');
-        showTeacherDashboard();
-      }
-    }
+        /* ==========================================
+           4. QUIZ FLOW LOGIC
+           ========================================== */
+        function handleStartQuiz(e) {
+            e.preventDefault();
 
-    function exportRecordsToCSV() {
-      const records = JSON.parse(localStorage.getItem('quizRecords') || '[]');
-      if (records.length === 0) {
-        alert('Tiada rekod untuk dieksport!');
-        return;
-      }
+            state.studentName = document.getElementById('studentName').value.trim();
+            state.studentClass = document.getElementById('studentClass').value.trim();
+            state.module = document.getElementById('moduleSelect').value;
 
-      let csvContent = "data:text/csv;charset=utf-8,Nama,Kelas,Modul,Markah,Peratus,Tarikh\n";
-      records.forEach(r => {
-        csvContent += `"${r.name}","${r.class}","${r.topic}","${r.score}","${r.percentage}","${r.date}"\n`;
-      });
+            if (!questionBank[state.module]) {
+                alert("Please select a valid module!");
+                return;
+            }
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "Rekod_Kuiz_English_Tahun3.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  </script>
+            // Shuffle questions for variety
+            state.questions = [...questionBank[state.module]].sort(() => Math.random() - 0.5);
+            state.currentQuestionIdx = 0;
+            state.userAnswers = [];
+            state.score = 0;
+            state.quizFinished = false;
+
+            switchView('quizView');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            clearInterval(state.timer);
+            const qData = state.questions[state.currentQuestionIdx];
+            const total = state.questions.length;
+
+            // UI Updates
+            document.getElementById('quizProgressText').textContent = `Question ${state.currentQuestionIdx + 1} of ${total}`;
+            document.getElementById('questionText').textContent = qData.q;
+            document.getElementById('progressBar').style.width = `${((state.currentQuestionIdx) / total) * 100}%`;
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+            qData.options.forEach((opt, idx) => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.onclick = () => selectOption(idx);
+                card.innerHTML = `
+                    <div class="option-prefix">${prefixes[idx]}</div>
+                    <div>${escapeHtml(opt)}</div>
+                `;
+                optionsContainer.appendChild(card);
+            });
+
+            // Timer Setup (30s per question)
+            state.timeLeft = 30;
+            updateTimerDisplay();
+            state.timer = setInterval(() => {
+                state.timeLeft--;
+                updateTimerDisplay();
+                if (state.timeLeft <= 0) {
+                    clearInterval(state.timer);
+                    selectOption(-1); // Timeout, marked as unselected
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const sec = state.timeLeft < 10 ? `0${state.timeLeft}` : state.timeLeft;
+            document.getElementById('timerText').textContent = `00:${sec}`;
+        }
+
+        function selectOption(optIndex) {
+            clearInterval(state.timer);
+
+            const qData = state.questions[state.currentQuestionIdx];
+            const isCorrect = (optIndex === qData.answer);
+
+            if (isCorrect) state.score++;
+
+            state.userAnswers.push({
+                question: qData.q,
+                selected: optIndex,
+                correct: qData.answer,
+                options: qData.options,
+                isCorrect: isCorrect
+            });
+
+            state.currentQuestionIdx++;
+
+            if (state.currentQuestionIdx < state.questions.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        /* ==========================================
+           5. RESULT PROCESSING & GOOGLE APPS SCRIPT POST
+           ========================================== */
+        function finishQuiz() {
+            state.quizFinished = true;
+            document.getElementById('progressBar').style.width = '100%';
+
+            const total = state.questions.length;
+            const percentage = Math.round((state.score / total) * 100);
+
+            // Grade Badge & Confetti
+            const statusBadge = document.getElementById('statusBadge');
+            if (percentage >= 80) {
+                statusBadge.textContent = 'Excellent 🌟';
+                statusBadge.className = 'badge-status badge-excellent';
+                triggerConfetti();
+            } else if (percentage >= 50) {
+                statusBadge.textContent = 'Good Job 👍';
+                statusBadge.className = 'badge-status badge-good';
+            } else {
+                statusBadge.textContent = 'Keep Trying 💪';
+                statusBadge.className = 'badge-status badge-try';
+            }
+
+            // Result Text
+            document.getElementById('finalScoreText').textContent = `${state.score} / ${total}`;
+            document.getElementById('finalPctText').textContent = `Accuracy: ${percentage}%`;
+
+            document.getElementById('resName').textContent = state.studentName;
+            document.getElementById('resClass').textContent = state.studentClass;
+            document.getElementById('resModule').textContent = state.module;
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB'); // DD/MM/YYYY
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('resDateTime').textContent = `${dateStr} ${timeStr}`;
+
+            renderReviewList();
+            switchView('resultView');
+
+            // Send to Google Sheets via Apps Script (no-cors mode)
+            sendDataToAppsScript(state.studentName, state.studentClass, state.module, `${state.score}/${total}`, `${percentage}%`, dateStr, timeStr);
+        }
+
+        async function sendDataToAppsScript(name, studentClass, module, score, percentage, date, time) {
+            const syncStatus = document.getElementById('syncStatus');
+            syncStatus.className = 'sync-status sync-loading';
+            syncStatus.innerHTML = '<span>🔄 Submitting results to cloud...</span>';
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        class: studentClass,
+                        module: module,
+                        score: score,
+                        percentage: percentage,
+                        date: date,
+                        time: time
+                    })
+                });
+
+                // Since mode is no-cors, fetch resolves successfully if network succeeds
+                syncStatus.className = 'sync-status sync-success';
+                syncStatus.innerHTML = '<span>✔ Results saved successfully to Google Sheets!</span>';
+            } catch (err) {
+                console.error("Submission Error:", err);
+                syncStatus.className = 'sync-status sync-error';
+                syncStatus.innerHTML = '<span>⚠️ Cloud sync pending. Check network connection.</span>';
+            }
+        }
+
+        /* ==========================================
+           6. REVIEW LIST GENERATION
+           ========================================== */
+        function renderReviewList() {
+            const container = document.getElementById('reviewContainer');
+            container.innerHTML = '';
+
+            state.userAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `review-item ${ans.isCorrect ? 'is-correct' : 'is-wrong'}`;
+
+                const userAnsText = ans.selected >= 0 ? ans.options[ans.selected] : 'No Answer (Time Out)';
+                const correctAnsText = ans.options[ans.correct];
+
+                item.innerHTML = `
+                    <div class="review-q-title">Q${idx + 1}. ${escapeHtml(ans.question)}</div>
+                    <div class="review-ans">
+                        Your Answer: <span class="ans-tag ${ans.isCorrect ? 'text-correct' : 'text-wrong'}">${escapeHtml(userAnsText)}</span>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans">
+                        Correct Answer: <span class="ans-tag text-correct">${escapeHtml(correctAnsText)}</span>
+                    </div>` : ''}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function resetToHome() {
+            clearInterval(state.timer);
+            switchView('loginView');
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        /* ==========================================
+           7. VANILLA CANVAS CONFETTI SYSTEM
+           ========================================== */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 14,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 10,
+                    opacity: 1
+                });
+            }
+
+            let animationId;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.25; // gravity
+                    p.opacity -= 0.012;
+                    p.rotation += p.rSpeed;
+
+                    if (p.opacity > 0) {
+                        alive = true;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+                        ctx.globalAlpha = Math.max(0, p.opacity);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                        ctx.restore();
+                    }
+                });
+
+                if (alive) {
+                    animationId = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationId);
+                }
+            }
+            animate();
+        }
+    </script>
 </body>
 </html>
